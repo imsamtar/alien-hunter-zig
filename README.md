@@ -1,3 +1,5 @@
+![](./starship.gif)
+
 ### Build
 ```bash
 zig build -Doptimize=ReleaseFast
