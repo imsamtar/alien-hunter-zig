@@ -62,7 +62,7 @@ fn addPlanet() void {
     const random = std.crypto.random;
     const mplanet: Planet = .{
         .pos = Vector2.init(0, random.float(f32) * screenHeight),
-        .width = 100,
+        .width = 25,
         .height = 50,
         .speed = 0.6 + random.float(f32) * 0.6,
         .hits = 0,
@@ -80,8 +80,6 @@ const Bullet = struct {
     accel: f32,
 
     pub fn draw(self: *Bullet) void {
-        // const timePassed: f32 = @floatFromInt(std.time.milliTimestamp() - self.firedAt);
-        // std.debug.print("Angle: {d} {d}\n", .{ self.angle, timePassed / 100 });
         self.pos = self.pos.add(
             Vector2.init(
                 0,
@@ -124,7 +122,7 @@ const Planet = struct {
 
         if (x < 0 and x > screenWidth and y < 0 and y > screenHeight) return;
 
-        rl.drawEllipse(x, y, shipWidth * 3, shipWidth * 1.5, fg);
+        rl.drawEllipse(x, y, self.height, self.width, fg);
     }
 };
 
@@ -151,7 +149,7 @@ pub fn main() !void {
     addPlanet();
 
     var lastKey: rl.KeyboardKey = .key_null;
-    var hits: i32 = -1;
+    var score: i32 = 0;
     while (!rl.windowShouldClose()) {
         if (std.crypto.random.float(f32) < 0.005) {
             addPlanet();
@@ -181,6 +179,18 @@ pub fn main() !void {
         rl.clearBackground(rl.Color.black);
         ship.draw();
 
+        for (0..planets.items.len) |i| {
+            if (planets.items[i].hits > 1) {
+                score += 1;
+                _ = planets.swapRemove(i);
+                break;
+            }
+        }
+
+        for (planets.items) |*planet| {
+            planet.draw();
+        }
+
         outer: while (true) {
             for (0..bullets.items.len) |i| {
                 for (0..planets.items.len) |j| {
@@ -201,20 +211,12 @@ pub fn main() !void {
             bullet.draw();
         }
 
-        if (planets.items.len > 0 and planets.items[0].hits != hits) {
-            std.debug.print("Hits: {d}\n", .{planets.items[0].hits});
-            hits += 1;
-        }
-
-        for (0..planets.items.len) |i| {
-            if (planets.items[i].hits > 1) {
-                _ = planets.swapRemove(i);
-                break;
-            }
-        }
-
-        for (planets.items) |*planet| {
-            planet.draw();
-        }
+        rl.drawText(
+            rl.textFormat("Score: %i", .{score}),
+            100,
+            100,
+            20,
+            fg,
+        );
     }
 }
