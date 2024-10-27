@@ -23,7 +23,7 @@ const Ship = struct {
 
     pub fn fire(self: *const Ship) void {
         const bullet: Bullet = .{
-            .pos = Vector2.init(self.pos.x, self.pos.y).add(Vector2.init(0, -shipHeight / 2).rotate(self.angle)),
+            .pos = Vector2.init(self.pos.x, self.pos.y).add(Vector2.init(0, -shipHeight).rotate(self.angle)),
             .speed = 0,
             .accel = 0.1,
             .angle = self.angle,
@@ -35,14 +35,14 @@ const Ship = struct {
     pub fn draw(self: *const Ship) void {
         const pivot = self.pos;
 
-        const head = pivot.add(Vector2.init(0, -shipHeight / 2).rotate(self.angle));
-        const leftBottom = pivot.add(Vector2.init(-shipWidth / 2, shipHeight / 2).rotate(self.angle));
-        const rightBottom = pivot.add(Vector2.init(shipWidth / 2, shipHeight / 2).rotate(self.angle));
-        const bottom = pivot.add(Vector2.init(0, shipHeight / 2.5).rotate(self.angle));
+        const head = pivot.add(Vector2.init(0, -shipHeight).rotate(self.angle));
+        const leftBottom = pivot.add(Vector2.init(-shipWidth / 2, 0).rotate(self.angle));
+        const rightBottom = pivot.add(Vector2.init(shipWidth / 2, 0).rotate(self.angle));
+        const bottom = pivot.add(Vector2.init(0, -shipHeight / 3).rotate(self.angle));
 
-        const flamLT = pivot.add(Vector2.init(-shipWidth / 2.5, shipHeight / 2).rotate(self.angle));
+        const flamLT = pivot.add(Vector2.init(-shipWidth / 2.5, shipHeight / 3).rotate(self.angle));
         const flamLB = pivot.add(Vector2.init(0, shipHeight / 1.2).rotate(self.angle));
-        const flamRT = pivot.add(Vector2.init(shipWidth / 2.5, shipHeight / 2).rotate(self.angle));
+        const flamRT = pivot.add(Vector2.init(shipWidth / 2.5, shipHeight / 3).rotate(self.angle));
         const flamRB = pivot.add(Vector2.init(0, shipHeight / 1.2).rotate(self.angle));
 
         rl.drawLineEx(head, leftBottom, thickness, fg);
@@ -163,10 +163,10 @@ pub fn main() !void {
         lastKey = key;
         switch (key) {
             .key_left, .key_h => {
-                ship.angle -= 0.1;
+                ship.angle -= 0.04;
             },
             .key_right, .key_l => {
-                ship.angle += 0.1;
+                ship.angle += 0.04;
             },
             .key_space => {
                 ship.fire();
